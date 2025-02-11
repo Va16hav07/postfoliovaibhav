@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Clock, GamepadIcon, Building2, Glasses, Github } from 'lucide-react';
+import { Heart, Clock, GamepadIcon, Building2, Glasses, Github ,TrendingUp} from 'lucide-react';
 
 const projects = [
   {
@@ -42,7 +42,16 @@ const projects = [
     tech: ['MERN', 'Spring Boot'],
     color: 'from-[#FF61D2] to-[#FE48C9]',
   },
+  {
+    title: 'Crypto Price Tracker',
+    description: 'A real-time cryptocurrency tracking application providing live price updates and historical data visualization.',
+    icon: TrendingUp,
+    link: 'https://github.com/Va16hav07/crypto-price-tracker.git',
+    tech: ['React', 'Node.js', 'CoinGecko API'],
+    color: 'from-[#0DCAF0] to-[#0A95B0]',
+  },
 ];
+
 
 const Projects = () => {
   return (
