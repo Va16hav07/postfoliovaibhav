@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraduationCap, Code2, Terminal, Coffee, Laptop, Book } from 'lucide-react';
+import { GraduationCap, Code2, Terminal, Coffee, Laptop, Book, ArrowDownCircle } from 'lucide-react';
 
 const skills = [
   { name: 'HTML5', level: 80 },
@@ -114,11 +114,20 @@ const About = () => {
         </div>
       </div>
 
-      {/* Quote */}
+      {/* Quote and Resume Download */}
       <div className="mt-12 glass-card rounded-2xl p-8 text-center">
-        <p className="text-xl text-lavender/90 italic">
+        <p className="text-xl text-lavender/90 italic mb-6">
           "Passionate about crafting elegant solutions to complex problems through code."
         </p>
+        
+        <a 
+          href="/Vaibhav_Kumawat_Resume.pdf" 
+          download="Vaibhav_Kumawat_Resume.pdf"
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-neon-blue to-neon-pink text-white py-2 px-4 rounded-lg font-medium shadow-lg hover:shadow-neon-blue/30 transition-all"
+        >
+          <ArrowDownCircle size={16} />
+          <span>Download My Resume</span>
+        </a>
       </div>
     </section>
   );

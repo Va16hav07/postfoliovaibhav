@@ -1,73 +1,160 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ArrowUp } from 'lucide-react';
+import Navigation from './components/Navigation';
 import Header from './components/Header';
 import About from './components/About';
 import Projects from './components/Projects';
 import OpenSource from './components/OpenSource';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import MatrixBackground from './components/effects/MatrixBackground';
+import AuroraEffect from './components/effects/AuroraEffect';
 
-function App() {
-  useEffect(() => {
-    const createMatrixRain = () => {
-      const container = document.querySelector('.matrix-background');
-      if (!container) return;
+const App: React.FC = () => {
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const scrollProgressRef = useRef<HTMLDivElement>(null);
+  const backToTopRef = useRef<HTMLButtonElement>(null);
+  const [activeSection, setActiveSection] = useState('home');
 
-      for (let i = 0; i < 50; i++) {
-        const column = document.createElement('div');
-        column.className = 'matrix-column';
-        column.style.left = `${Math.random() * 100}%`;
-        column.style.animationDelay = `${Math.random() * 20}s`;
-        column.textContent = '10'.repeat(30);
-        container.appendChild(column);
+  // Handle scroll progress indicator and back to top button visibility
+  const handleScroll = () => {
+    if (!scrollProgressRef.current || !backToTopRef.current) return;
+    
+    const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollPosition = window.scrollY;
+    const scrollPercentage = (scrollPosition / totalScroll) * 100;
+    
+    scrollProgressRef.current.style.transform = `scaleX(${scrollPercentage / 100})`;
+    
+    // Show back to top button after scrolling 300px
+    if (scrollPosition > 300) {
+      backToTopRef.current.classList.remove('opacity-0', 'pointer-events-none');
+      backToTopRef.current.classList.add('opacity-100');
+    } else {
+      backToTopRef.current.classList.add('opacity-0', 'pointer-events-none');
+      backToTopRef.current.classList.remove('opacity-100');
+    }
+    
+    // Improved section detection
+    const sections = ['home', 'about', 'projects', 'opensource', 'contact'];
+    
+    // Find which section is currently in view
+    for (let i = sections.length - 1; i >= 0; i--) {
+      const section = document.getElementById(sections[i]);
+      if (section) {
+        const rect = section.getBoundingClientRect();
+        // If the section is in the viewport (or just above it)
+        if (rect.top <= 100) {
+          setActiveSection(sections[i]);
+          break;
+        }
       }
+    }
+    
+    // Edge case: At the top of the page, always set to home
+    if (scrollPosition < 100) {
+      setActiveSection('home');
+    }
+  };
+
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  // Setup intersection observer for animation on scroll
+  useEffect(() => {
+    const setupScrollObserver = () => {
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observerRef.current?.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      document.querySelectorAll('.fade-in').forEach((element) => {
+        observerRef.current?.observe(element);
+      });
     };
 
-    createMatrixRain();
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Initial setup
+    setupScrollObserver();
+    handleScroll();
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observerRef.current?.disconnect();
+    };
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0a0a1f] text-white overflow-hidden">
-      <div className="matrix-background absolute inset-0 opacity-20" />
-      <div className="aurora-background absolute inset-0">
-        <div className="aurora-beam" />
-      </div>
+    <>
+      {/* Background Effects */}
+      <AuroraEffect />
+      <div className="bg-cyber-grid bg-[length:50px_50px] fixed inset-0 opacity-20 pointer-events-none"></div>
+      <MatrixBackground />
       
-      <div className="relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Header />
-          
-          <main className="py-12 space-y-32">
-            <div className="transform hover:scale-105 transition-all duration-500">
-              <div className="glass-panel rounded-2xl p-8 backdrop-blur-lg bg-white/5">
-                <About />
-              </div>
+      {/* Progress Bar */}
+      <div ref={scrollProgressRef} className="progress-indicator" />
+      
+      {/* Navigation */}
+      <Navigation activeSection={activeSection} />
+      
+      <main className="relative z-10">
+        <Header />
+        
+        <section id="about" className="section">
+          <div className="container-custom">
+            <div className="card fade-in">
+              <About />
             </div>
-            
-            {/* Projects Section */}
-            <div className="space-y-8">
-              <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-neon-blue to-neon-pink bg-clip-text text-transparent mb-16">
-                Featured Projects
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <Projects />
-              </div>
-            </div>
-            
-            {/* Open Source Section */}
-            <div className="glass-panel rounded-2xl p-8 transform hover:scale-105 transition-transform duration-500 backdrop-blur-lg bg-white/5">
+          </div>
+        </section>
+        
+       
+        
+        <Projects />
+        
+        <section id="opensource" className="section">
+          <div className="container-custom">
+            <div className="card fade-in">
               <OpenSource />
             </div>
-            
-            <div className="glass-panel rounded-2xl p-8 hover:shadow-neon transition-shadow duration-500 backdrop-blur-lg bg-white/5">
+          </div>
+        </section>
+        
+        <section id="contact" className="section bg-gradient-to-b from-dark-light to-cyber-dark">
+          <div className="container-custom">
+            <div className="card fade-in">
               <Contact />
             </div>
-          </main>
-          
-          <Footer />
-        </div>
-      </div>
-    </div>
+          </div>
+        </section>
+        
+        <button 
+          ref={backToTopRef}
+          onClick={scrollToTop}
+          aria-label="Back to top"
+          className="btn-floating opacity-0 pointer-events-none transition-opacity duration-300"
+        >
+          <ArrowUp size={24} />
+        </button>
+      </main>
+      
+      <Footer />
+    </>
   );
-}
+};
 
-export default App
+export default App;
