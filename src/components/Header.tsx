@@ -64,6 +64,14 @@ const Header: React.FC = () => {
     const link = document.createElement('a');
     link.href = resumeUrl;
     link.setAttribute('download', 'Vaibhav_Kumawat_Resume.pdf');
+    link.setAttribute('target', '_blank'); // Open in new tab if download fails
+    
+    // Add error handling
+    link.onerror = () => {
+      console.error('Failed to download resume');
+      // Fallback - open in new tab
+      window.open(resumeUrl, '_blank');
+    };
     
     // Append to body, click, and remove
     document.body.appendChild(link);

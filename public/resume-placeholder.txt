@@ -1,0 +1,2 @@
+This is a placeholder for the resume file. 
+Please add your actual resume file named "Vaibhav_Kumawat_Resume.pdf" to the /public directory.

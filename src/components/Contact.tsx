@@ -33,14 +33,14 @@ const Contact: React.FC = () => {
     try {
       // Configure these with your EmailJS service details
       await emailjs.send(
-        'YOUR_SERVICE_ID', // Replace with your service ID
-        'YOUR_TEMPLATE_ID', // Replace with your template ID
+        'service_22x7bka', // Replace with your service ID
+        'template_qpwzp3c', // Replace with your template ID
         {
           from_name: formData.name,
           from_email: formData.email,
           message: formData.message
         },
-        'YOUR_PUBLIC_KEY' // Replace with your public key
+        'JW6xs8hFmH49Yb0YQ' // Replace with your public key
       );
       
       setFormStatus({

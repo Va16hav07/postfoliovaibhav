@@ -120,14 +120,22 @@ const About = () => {
           "Passionate about crafting elegant solutions to complex problems through code."
         </p>
         
-        <a 
-          href="/Vaibhav_Kumawat_Resume.pdf" 
-          download="Vaibhav_Kumawat_Resume.pdf"
+        <button 
+          onClick={() => {
+            const resumeUrl = '/Vaibhav_Kumawat_Resume.pdf';
+            const link = document.createElement('a');
+            link.href = resumeUrl;
+            link.setAttribute('download', 'Vaibhav_Kumawat_Resume.pdf');
+            link.setAttribute('target', '_blank'); // Open in new tab if download fails
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }}
           className="inline-flex items-center gap-2 bg-gradient-to-r from-neon-blue to-neon-pink text-white py-2 px-4 rounded-lg font-medium shadow-lg hover:shadow-neon-blue/30 transition-all"
         >
           <ArrowDownCircle size={16} />
           <span>Download My Resume</span>
-        </a>
+        </button>
       </div>
     </section>
   );
