@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface NavigationProps {
   activeSection: string;
@@ -23,9 +24,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeSection }) => {
   
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
   const scrollToSection = (href: string) => {
@@ -36,23 +35,21 @@ const Navigation: React.FC<NavigationProps> = ({ activeSection }) => {
     }
   };
 
-  // Check if the link is active
   const isActive = (linkId: string): boolean => {
     return activeSection === linkId;
   };
 
   return (
-    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'py-3 backdrop-blur-lg bg-dark/80 shadow-lg' : 'py-5 bg-transparent'}`}>
+    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${isScrolled ? 'py-4 bg-background/80 backdrop-blur-md border-b border-white/5 shadow-sm' : 'py-6 bg-transparent'}`}>
       <div className="container-custom">
         <div className="flex items-center justify-between">
-          <a href="#home" className="text-2xl font-bold text-white flex items-center gap-2">
-            <span className="text-neon-blue">&lt;</span>
-            <span className="bg-gradient-to-r from-neon-blue to-neon-pink bg-clip-text text-transparent">Vaibhav</span>
-            <span className="text-neon-pink">/&gt;</span>
+          <a href="#home" className="text-xl font-bold text-white flex items-center gap-1 group">
+            <span className="text-blue-500 group-hover:-translate-x-1 transition-transform">V</span>
+            <span className="text-white">aibhav.</span>
           </a>
           
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-1">
             {navLinks.map((link) => (
               <a
                 key={link.name}
@@ -61,16 +58,13 @@ const Navigation: React.FC<NavigationProps> = ({ activeSection }) => {
                   e.preventDefault();
                   scrollToSection(link.href);
                 }}
-                className={`nav-link relative text-sm font-medium transition-all ${
+                className={`relative px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                   isActive(link.id) 
-                    ? 'text-neon-blue' 
-                    : 'text-lavender/70 hover:text-lavender'
+                    ? 'text-white bg-white/10' 
+                    : 'text-white/60 hover:text-white hover:bg-white/5'
                 }`}
               >
                 {link.name}
-                {isActive(link.id) && (
-                  <span className="absolute -bottom-0.5 left-0 h-0.5 w-full bg-neon-blue"></span>
-                )}
               </a>
             ))}
           </div>
@@ -78,37 +72,44 @@ const Navigation: React.FC<NavigationProps> = ({ activeSection }) => {
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-white focus:outline-none"
+            className="md:hidden text-white/80 hover:text-white focus:outline-none p-2 rounded-full hover:bg-white/5 transition-colors"
           >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
       
       {/* Mobile Navigation */}
-      {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-dark-light backdrop-blur-lg border-t border-white/10 py-4 shadow-lg">
-          <div className="container-custom flex flex-col space-y-4">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection(link.href);
-                }}
-                className={`py-2 ${
-                  isActive(link.id) 
-                    ? 'text-neon-blue' 
-                    : 'text-lavender/70'
-                }`}
-              >
-                {link.name}
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden absolute top-full left-0 w-full bg-background/95 backdrop-blur-xl border-b border-white/10 overflow-hidden shadow-2xl"
+          >
+            <div className="container-custom py-4 flex flex-col space-y-1">
+              {navLinks.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection(link.href);
+                  }}
+                  className={`py-3 px-4 rounded-xl font-medium transition-colors ${
+                    isActive(link.id) 
+                      ? 'bg-white/10 text-white' 
+                      : 'text-white/60 hover:bg-white/5 hover:text-white'
+                  }`}
+                >
+                  {link.name}
+                </a>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };

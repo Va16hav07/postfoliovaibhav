@@ -1,5 +1,6 @@
 import React, { useState, FormEvent } from 'react';
-import { Send, Check, AlertCircle, AtSign, MessageSquare, User } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Send, Check, AlertCircle, Mail, MapPin, User, FileText } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 
 const Contact: React.FC = () => {
@@ -31,7 +32,6 @@ const Contact: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      // Configure these with your EmailJS service details
       await emailjs.send(
         'service_22x7bka', // Replace with your service ID
         'template_qpwzp3c', // Replace with your template ID
@@ -46,7 +46,7 @@ const Contact: React.FC = () => {
       setFormStatus({
         submitted: true,
         success: true,
-        message: 'Thanks for reaching out! I\'ll get back to you soon.'
+        message: 'Message sent successfully. I will get back to you soon!'
       });
       
       setFormData({ name: '', email: '', message: '' });
@@ -55,137 +55,167 @@ const Contact: React.FC = () => {
       setFormStatus({
         submitted: true,
         success: false,
-        message: 'Something went wrong. Please try again or contact me directly via email.'
+        message: 'Something went wrong. Please try again or email me directly.'
       });
     } finally {
       setIsSubmitting(false);
+      setTimeout(() => setFormStatus({ submitted: false, success: false, message: '' }), 5000);
     }
   };
 
   return (
-    <div className="py-8 px-4">
-      <h2 className="relative text-4xl font-bold mb-12 text-center text-white cyber-text" data-text="Get In Touch">
-        Get In Touch
-      </h2>
-      
-      <div className="max-w-4xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="fade-in">
-            <h3 className="text-2xl font-bold mb-6 text-neon-blue">Let's Connect</h3>
-            <p className="text-lavender/80 mb-8">
-              I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
-              Whether you have a question or just want to say hi, I'll try my best to get back to you!
-            </p>
+    <section id="contact" className="section relative overflow-hidden">
+      <div className="container-custom relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center max-w-2xl mx-auto mb-16"
+        >
+          <h2 className="section-title">Get in Touch</h2>
+          <p className="text-muted leading-relaxed">
+            I'm currently looking for new opportunities and collaborations. Whether you have a question or just want to say hi, my inbox is always open.
+          </p>
+        </motion.div>
+        
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
             
-            <div className="space-y-8">
-              <div className="glass-card p-6 rounded-xl hover:scale-105 transition-all duration-300">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-neon-blue/20 flex items-center justify-center">
-                    <AtSign size={24} className="text-neon-blue animate-pulse-slow" />
+            {/* Contact Info */}
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="lg:col-span-2 space-y-6"
+            >
+              <div className="premium-card p-8 h-full flex flex-col justify-center">
+                <h3 className="text-xl font-semibold text-white mb-8">Contact Information</h3>
+                
+                <div className="space-y-8">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 mt-1">
+                      <Mail size={18} className="text-white/70" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-white/50 font-medium mb-1">Email bounds</p>
+                      <a href="mailto:vaibhavkumwat7605@gmail.com" className="text-white hover:text-blue-400 transition-colors">
+                        vaibhavkumwat7605@gmail.com
+                      </a>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm text-lavender/60 mb-1">Email</h4>
-                    <a href="mailto:vaibhavkumwat7605@gmail.com" className="text-lg font-medium text-neon-pink hover:text-neon-blue transition-colors">
-                      vaibhavkumwat7605@gmail.com
-                    </a>
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 mt-1">
+                      <MapPin size={18} className="text-white/70" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-white/50 font-medium mb-1">Location</p>
+                      <p className="text-white">Remote / Willing to Relocate</p>
+                    </div>
                   </div>
                 </div>
               </div>
-              
-              <div className="glass-card p-6 rounded-xl hover:scale-105 transition-all duration-300">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-neon-pink/20 flex items-center justify-center">
-                    <MessageSquare size={24} className="text-neon-pink animate-pulse-slow" />
+            </motion.div>
+            
+            {/* Contact Form */}
+            <motion.div 
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="lg:col-span-3"
+            >
+              <div className="premium-card p-8 relative">
+                {formStatus.submitted && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`absolute inset-x-8 top-8 p-4 rounded-lg flex items-center gap-3 text-sm font-medium z-20 ${
+                      formStatus.success ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                    }`}
+                  >
+                    {formStatus.success ? <Check size={18} /> : <AlertCircle size={18} />}
+                    <p>{formStatus.message}</p>
+                  </motion.div>
+                )}
+                
+                <form onSubmit={handleSubmit} className={`space-y-6 ${formStatus.submitted ? 'mt-16' : ''} transition-all`}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label htmlFor="name" className="text-sm font-medium text-white/70 pl-1">Name</label>
+                      <div className="relative">
+                        <User size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/30" />
+                        <input
+                          id="name"
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          placeholder="John Doe"
+                          required
+                          className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-11 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label htmlFor="email" className="text-sm font-medium text-white/70 pl-1">Email</label>
+                      <div className="relative">
+                        <Mail size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/30" />
+                        <input
+                          id="email"
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          placeholder="john@example.com"
+                          required
+                          className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-11 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all"
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm text-lavender/60 mb-1">Connect</h4>
-                    <a href="https://linkedin.com/in/va16hav" target="_blank" rel="noopener noreferrer" className="text-lg font-medium text-neon-blue hover:text-neon-pink transition-colors">
-                      linkedin.com/in/va16hav
-                    </a>
+                  
+                  <div className="space-y-2">
+                    <label htmlFor="message" className="text-sm font-medium text-white/70 pl-1">Message</label>
+                    <div className="relative">
+                      <FileText size={18} className="absolute left-4 top-4 text-white/30" />
+                      <textarea
+                        id="message"
+                        name="message"
+                        value={formData.message}
+                        onChange={handleChange}
+                        placeholder="How can I help you?"
+                        required
+                        rows={5}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all resize-none"
+                      ></textarea>
+                    </div>
                   </div>
-                </div>
+                  
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-white text-black py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors disabled:opacity-70 disabled:cursor-not-allowed group active:scale-[0.98]"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-5 h-5 rounded-full border-2 border-black/30 border-t-black animate-spin"></div>
+                        <span>Sending Message...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Send Message</span>
+                        <Send size={18} className="group-hover:translate-x-1 transition-transform" />
+                      </>
+                    )}
+                  </button>
+                </form>
               </div>
-            </div>
-          </div>
-          
-          <div className="fade-in">
-            <div className="glass-card p-6 rounded-xl border border-white/10 shadow-lg">
-              {formStatus.submitted && (
-                <div className={`p-4 rounded-lg mb-6 flex items-center gap-3 ${formStatus.success ? 'bg-neon-green/10 text-neon-green' : 'bg-neon-pink/10 text-neon-pink'}`}>
-                  {formStatus.success ? <Check size={20} /> : <AlertCircle size={20} />}
-                  <p>{formStatus.message}</p>
-                </div>
-              )}
-              
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <div className="form-input-wrapper relative">
-                    <User size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40" />
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="Your Name"
-                      required
-                      className="form-input pl-12"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="form-input-wrapper relative">
-                    <AtSign size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40" />
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="Your Email"
-                      required
-                      className="form-input pl-12"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="form-input-wrapper relative">
-                    <MessageSquare size={18} className="absolute left-4 top-6 text-white/40" />
-                    <textarea
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      placeholder="Your Message"
-                      required
-                      rows={5}
-                      className="form-input pl-12 pt-4"
-                    ></textarea>
-                  </div>
-                </div>
-                
-                <button
-                  type="submit"
-                  className="bg-gradient-to-r from-neon-blue to-neon-pink w-full py-3 rounded-lg flex items-center justify-center gap-2 font-medium text-white shadow-lg hover:shadow-neon-blue/50 transition-all disabled:opacity-70"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
-                      <span>Sending...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send size={18} />
-                      <span>Send Message</span>
-                    </>
-                  )}
-                </button>
-              </form>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
