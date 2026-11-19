@@ -1,56 +1,54 @@
 /** @type {import('tailwindcss').Config} */
+const token = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        background: '#0a0a0b',
-        foreground: '#ededed',
-        muted: '#a1a1aa',
-        primary: '#ffffff',
-        accent: '#3b82f6',
-        surface: 'rgba(255, 255, 255, 0.03)',
-        'surface-hover': 'rgba(255, 255, 255, 0.06)',
-        border: 'rgba(255, 255, 255, 0.08)',
+        canvas: token('canvas'),
+        surface: token('surface'),
+        'surface-2': token('surface-2'),
+        ink: token('ink'),
+        'ink-2': token('ink-2'),
+        'ink-3': token('ink-3'),
+        line: token('line'),
+        accent: token('accent'),
+        'accent-ink': token('accent-ink'),
+        success: token('success'),
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        mono: ['Fira Code', 'monospace'],
+        sans: [
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"SF Pro Text"',
+          '"SF Pro Display"',
+          'system-ui',
+          '"Segoe UI"',
+          'Roboto',
+          '"Helvetica Neue"',
+          'Arial',
+          'sans-serif',
+        ],
+        mono: ['ui-monospace', '"SF Mono"', 'Menlo', 'Consolas', 'monospace'],
       },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'grid-pattern': 'linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px)',
-        'hero-glow': 'radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15), transparent 60%)',
+      maxWidth: {
+        page: '68rem',
       },
-      animation: {
-        'fade-in': 'fadeIn 0.5s ease-in-out',
-        'slide-up': 'slideUp 0.7s ease-out forwards',
-        'spotlight': 'spotlight 2s ease .75s 1 forwards',
+      borderRadius: {
+        card: '1.75rem',
       },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: 0 },
-          '100%': { opacity: 1 },
-        },
-        slideUp: {
-          '0%': { transform: 'translateY(20px)', opacity: 0 },
-          '100%': { transform: 'translateY(0)', opacity: 1 },
-        },
-        spotlight: {
-          '0%': {
-            opacity: 0,
-            transform: 'translate(-72%, -62%) scale(0.5)',
-          },
-          '100%': {
-            opacity: 1,
-            transform: 'translate(-50%,-40%) scale(1)',
-          },
-        },
+      boxShadow: {
+        card: '0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -12px rgb(0 0 0 / 0.12)',
+        'card-hover': '0 2px 4px rgb(0 0 0 / 0.05), 0 20px 40px -16px rgb(0 0 0 / 0.22)',
+        float: '0 8px 32px -8px rgb(0 0 0 / 0.25)',
       },
     },
   },
-  plugins: [],
-}
+  plugins: [
+    ({ addVariant }) => {
+      addVariant('pointer-coarse', '@media (pointer: coarse)');
+    },
+  ],
+};

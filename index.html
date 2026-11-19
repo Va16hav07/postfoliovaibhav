@@ -2,12 +2,67 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vaibhav's Portfolio</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <script>
+      // Apply the saved or system theme before first paint to avoid a flash.
+      (function () {
+        try {
+          var saved = localStorage.getItem('theme');
+          var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (dark) document.documentElement.classList.add('dark');
+          var accent = localStorage.getItem('accent');
+          if (accent) document.documentElement.dataset.accent = accent;
+        } catch (e) {}
+      })();
+    </script>
+    <title>Vaibhav Kumawat | Software Engineer</title>
+    <meta name="description" content="Vaibhav Kumawat, software engineer from Bengaluru. SWE Intern at Valzy, previously ZUVEES and KubeStellar (IFoS). Full-stack, mobile and open source." />
+    <link rel="canonical" href="https://va16hav.vercel.app/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://va16hav.vercel.app/" />
+    <meta property="og:title" content="Vaibhav Kumawat | Software Engineer" />
+    <meta property="og:description" content="SWE Intern at Valzy, previously ZUVEES and KubeStellar (IFoS). Full-stack, mobile and open source." />
+    <meta property="og:image" content="https://va16hav.vercel.app/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Vaibhav Kumawat smiling" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@Va16hav" />
+    <meta name="twitter:title" content="Vaibhav Kumawat | Software Engineer" />
+    <meta name="twitter:description" content="SWE Intern at Valzy, previously ZUVEES and KubeStellar (IFoS). Full-stack, mobile and open source." />
+    <meta name="twitter:image" content="https://va16hav.vercel.app/og-image.jpg" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Vaibhav Kumawat",
+        "url": "https://va16hav.vercel.app/",
+        "image": "https://va16hav.vercel.app/og-image.jpg",
+        "jobTitle": "Software Engineer Intern",
+        "worksFor": { "@type": "Organization", "name": "Valzy" },
+        "alumniOf": { "@type": "CollegeOrUniversity", "name": "Polaris School of Technology" },
+        "address": { "@type": "PostalAddress", "addressLocality": "Bengaluru", "addressCountry": "IN" },
+        "sameAs": [
+          "https://github.com/Va16hav07",
+          "https://www.linkedin.com/in/va16hav/",
+          "https://x.com/Va16hav"
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <h1>Vaibhav Kumawat, Software Engineer</h1>
+      <p>Software Engineer Intern at Valzy. Previously ZUVEES and KubeStellar (IFoS). Builds AI agents, mobile apps and full-stack products. 28 merged open source PRs, including Hugging Face Diffusers.</p>
+      <p><a href="https://github.com/Va16hav07">GitHub</a> · <a href="https://www.linkedin.com/in/va16hav/">LinkedIn</a> · <a href="mailto:vaibhavkumawat7605@gmail.com">Email</a></p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

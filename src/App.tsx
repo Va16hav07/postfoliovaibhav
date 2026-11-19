@@ -1,96 +1,82 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowUp } from 'lucide-react';
+import { lazy, Suspense, useEffect, useState } from 'react';
+import { AnimatePresence, MotionConfig } from 'framer-motion';
 import Navigation from './components/Navigation';
-import Header from './components/Header';
-import About from './components/About';
+import Hero from './components/Hero';
 import Projects from './components/Projects';
+import Experience from './components/Experience';
 import OpenSource from './components/OpenSource';
+import Now from './components/Now';
+import Terminal from './components/Terminal';
+import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import CommandPalette from './components/CommandPalette';
+import CursorTrail from './components/CursorTrail';
+import Intro from './components/Intro';
+import { SkillStatus } from './components/SkillFilter';
+import { Section } from './components/ui';
 
-const App: React.FC = () => {
-  const [activeSection, setActiveSection] = useState('home');
-  const [showBackToTop, setShowBackToTop] = useState(false);
+const IncidentGame = lazy(() => import('./components/IncidentGame'));
+const MergeRunner = lazy(() => import('./components/MergeRunner'));
+
+export type GameId = 'incident' | 'merge';
+
+export default function App() {
+  const [game, setGame] = useState<GameId | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      setShowBackToTop(scrollPosition > 300);
-      
-      const sections = ['home', 'about', 'projects', 'opensource', 'contact'];
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = document.getElementById(sections[i]);
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= 150) {
-            setActiveSection(sections[i]);
-            break;
-          }
-        }
-      }
-      
-      if (scrollPosition < 100) {
-        setActiveSection('home');
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-    
-    return () => window.removeEventListener('scroll', handleScroll);
+    // Any component can open a game: window.dispatchEvent(new CustomEvent('open-game', { detail: 'merge' }))
+    const open = (e: Event) => setGame(((e as CustomEvent).detail as GameId) ?? 'incident');
+    window.addEventListener('open-game', open);
+    // Deep link from the 404 page or anywhere else: /?play=merge or /?play=incident
+    const play = new URLSearchParams(window.location.search).get('play');
+    if (play === 'merge' || play === 'incident') {
+      setGame(play);
+      history.replaceState(null, '', window.location.pathname + window.location.hash);
+    }
+    return () => window.removeEventListener('open-game', open);
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
-
   return (
-    <div className="bg-background min-h-screen text-foreground selection:bg-white/20">
-      {/* Subtle modern background glow */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-500/10 blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-500/10 blur-[120px]" />
-        <div className="absolute inset-0 bg-[url('https://res.cloudinary.com/dzl9yxixg/image/upload/v1714558602/noise_djf022.png')] opacity-[0.03] mix-blend-overlay" />
-      </div>
-
-      <Navigation activeSection={activeSection} />
-      
-      <main className="relative z-10">
-        <Header />
-        
-        <div className="relative">
-          <About />
-        </div>
-        
-        <div className="relative">
-          <Projects />
-        </div>
-        
-        <div className="relative">
-          <OpenSource />
-        </div>
-        
-        <div className="relative border-t border-white/[0.05] bg-gradient-to-b from-background to-black">
-          <Contact />
-        </div>
-        
-        <button 
-          onClick={scrollToTop}
-          aria-label="Back to top"
-          className={`fixed bottom-8 right-8 p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-lg z-50 transition-all duration-300 hover:bg-white flex items-center justify-center hover:text-black hover:scale-110 active:scale-95 ${
-            showBackToTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
-          }`}
+    // Springs and slides become simple fades for visitors who ask for reduced motion.
+    <MotionConfig reducedMotion="user">
+      <a
+        href="#work"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-accent focus:px-4 focus:py-2 focus:text-accent-ink"
+      >
+        Skip to content
+      </a>
+      <Navigation />
+      <main>
+        <Hero />
+        <Projects />
+        <Experience />
+        <OpenSource />
+        <Now />
+        <Section
+          id="terminal"
+          eyebrow="For developers"
+          title="Prefer the command line?"
+          intro="Explore the same portfolio from a terminal. Tab completes, arrow keys walk your history."
         >
-          <ArrowUp size={20} />
-        </button>
+          <div className="mx-auto max-w-3xl">
+            <Terminal />
+          </div>
+        </Section>
+        <About />
+        <Contact />
       </main>
-      
       <Footer />
-    </div>
+      <CommandPalette />
+      <CursorTrail />
+      <SkillStatus />
+      <Intro />
+      <Suspense fallback={null}>
+        <AnimatePresence>
+          {game === 'incident' && <IncidentGame key="incident" onClose={() => setGame(null)} />}
+          {game === 'merge' && <MergeRunner key="merge" onClose={() => setGame(null)} />}
+        </AnimatePresence>
+      </Suspense>
+    </MotionConfig>
   );
-};
-
-export default App;
+}

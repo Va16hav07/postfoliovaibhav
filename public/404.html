@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>404: commit not found · Vaibhav Kumawat</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      try {
+        var t = localStorage.getItem('theme');
+        if (t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
+        var a = localStorage.getItem('accent');
+        if (a) document.documentElement.dataset.accent = a;
+      } catch (e) {}
+    </script>
+    <style>
+      :root { --bg: #fbfbfd; --card: #fff; --ink: #1d1d1f; --ink2: #6e6e73; --line: rgba(0,0,0,.08); --accent: #0071e3; }
+      .dark { --bg: #000; --card: #161618; --ink: #f5f5f7; --ink2: #a1a1a6; --line: rgba(255,255,255,.1); --accent: #2997ff; }
+      [data-accent='green'] { --accent: #248a3d } .dark[data-accent='green'] { --accent: #30d158 }
+      [data-accent='purple'] { --accent: #8944ab } .dark[data-accent='purple'] { --accent: #bf5af2 }
+      [data-accent='orange'] { --accent: #c93400 } .dark[data-accent='orange'] { --accent: #ff9f0a }
+      [data-accent='pink'] { --accent: #d30f45 } .dark[data-accent='pink'] { --accent: #ff375f }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: 24px;
+        background: var(--bg); color: var(--ink);
+        font: 17px/1.47 -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, sans-serif;
+        letter-spacing: -0.022em; -webkit-font-smoothing: antialiased;
+      }
+      main { width: 100%; max-width: 34rem; }
+      .term {
+        background: var(--card); border-radius: 22px; overflow: hidden;
+        box-shadow: inset 0 0 0 1px var(--line), 0 20px 50px -20px rgba(0,0,0,.25);
+      }
+      .bar { display: flex; gap: 8px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+      .bar i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+      .bar span { margin-left: 10px; font: 12px ui-monospace, 'SF Mono', Menlo, monospace; color: var(--ink2); }
+      pre { margin: 0; padding: 20px; font: 13px/1.7 ui-monospace, 'SF Mono', Menlo, monospace; white-space: pre-wrap; color: var(--ink2); }
+      pre b { color: var(--ink); font-weight: 600; }
+      .ok { color: #28c840; } .err { color: #ff453a; } .acc { color: var(--accent); }
+      h1 { font-size: clamp(2.25rem, 7vw, 3.25rem); line-height: 1.05; letter-spacing: -0.035em; margin: 36px 0 10px; }
+      p.lead { color: var(--ink2); margin: 0 0 28px; font-size: 1.125rem; }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+      a.btn {
+        display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 999px;
+        font-weight: 500; font-size: 15px; text-decoration: none; transition: transform .2s ease, opacity .2s ease;
+      }
+      a.btn:active { transform: scale(.97); }
+      a.primary { background: var(--accent); color: #fff; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; }
+      a.secondary { background: var(--line); color: var(--ink); }
+      a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+      .cursor { display: inline-block; width: .55em; height: 1.1em; vertical-align: -0.2em; background: var(--accent); animation: blink 1s steps(1) infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+      @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="term" role="img" aria-label="Terminal showing a failed git checkout">
+        <div class="bar">
+          <i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i>
+          <span>vaibhav@portfolio: ~</span>
+        </div>
+        <pre><span class="ok">➜</span> <span class="acc">~</span> <b>git checkout <span id="path">this-page</span></b>
+<span class="err">error:</span> pathspec '<span id="path2">this-page</span>' did not match any file(s) known to git
+<span class="ok">➜</span> <span class="acc">~</span> <span class="cursor"></span></pre>
+      </div>
+
+      <h1>404: commit not found.</h1>
+      <p class="lead">This page was never merged, or it got reverted. Let's get you back to main.</p>
+      <div class="actions">
+        <a class="btn primary" href="/">$ git checkout main</a>
+        <a class="btn secondary" href="/?play=merge">Play Merge Runner instead</a>
+      </div>
+    </main>
+    <script>
+      var p = location.pathname.replace(/^\/+/, '').slice(0, 40) || 'this-page';
+      document.getElementById('path').textContent = p;
+      document.getElementById('path2').textContent = p;
+    </script>
+  </body>
+</html>

@@ -1,117 +1,199 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Menu, Moon, Search, Sun, X } from 'lucide-react';
+import { snappy, spring } from './motion';
+import AccentPicker from './AccentPicker';
 
-interface NavigationProps {
-  activeSection: string;
+const links = [
+  { id: 'work', label: 'Work' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'open-source', label: 'Open Source' },
+  { id: 'about', label: 'About' },
+  { id: 'contact', label: 'Contact' },
+];
+
+const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.userAgent);
+
+function useTheme() {
+  const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'));
+
+  useEffect(() => {
+    // Follow the system setting until the visitor picks one themselves.
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = (e: MediaQueryListEvent) => {
+      if (localStorage.getItem('theme')) return;
+      document.documentElement.classList.toggle('dark', e.matches);
+      setDark(e.matches);
+    };
+    // The terminal's `theme` command changes the theme too; stay in sync.
+    const onExternal = () => setDark(document.documentElement.classList.contains('dark'));
+    media.addEventListener('change', onChange);
+    window.addEventListener('themechange', onExternal);
+    return () => {
+      media.removeEventListener('change', onChange);
+      window.removeEventListener('themechange', onExternal);
+    };
+  }, []);
+
+  const toggle = () => {
+    const next = !dark;
+    document.documentElement.classList.toggle('dark', next);
+    localStorage.setItem('theme', next ? 'dark' : 'light');
+    setDark(next);
+  };
+
+  return { dark, toggle };
 }
 
-const Navigation: React.FC<NavigationProps> = ({ activeSection }) => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
-  const navLinks = [
-    { name: 'Home', href: '#home', id: 'home' },
-    { name: 'About', href: '#about', id: 'about' },
-    { name: 'Projects', href: '#projects', id: 'projects' },
-    { name: 'Open Source', href: '#opensource', id: 'opensource' },
-    { name: 'Contact', href: '#contact', id: 'contact' },
-  ];
-  
-  const handleScroll = () => {
-    setIsScrolled(window.scrollY > 20);
-  };
-  
+function useActiveSection() {
+  const [active, setActive] = useState('');
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-  
-  const scrollToSection = (href: string) => {
-    setMobileMenuOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    for (const { id } of links) {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
     }
-  };
+    const hero = document.getElementById('top');
+    if (hero) observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
+  return active;
+}
 
-  const isActive = (linkId: string): boolean => {
-    return activeSection === linkId;
-  };
+export default function Navigation() {
+  const [open, setOpen] = useState(false);
+  const active = useActiveSection();
+  const { dark, toggle } = useTheme();
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
 
   return (
-    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${isScrolled ? 'py-4 bg-background/80 backdrop-blur-md border-b border-white/5 shadow-sm' : 'py-6 bg-transparent'}`}>
-      <div className="container-custom">
-        <div className="flex items-center justify-between">
-          <a href="#home" className="text-xl font-bold text-white flex items-center gap-1 group">
-            <span className="text-blue-500 group-hover:-translate-x-1 transition-transform">V</span>
-            <span className="text-white">aibhav.</span>
-          </a>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            {navLinks.map((link) => (
+    <header className="fixed inset-x-0 top-0 z-50 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:pt-4">
+      <nav
+        aria-label="Main"
+        className="material mx-auto flex max-w-page items-center justify-between rounded-full py-1.5 pl-5 pr-1.5"
+      >
+        <a href="#top" className="text-[0.9375rem] font-semibold tracking-tight">
+          Vaibhav Kumawat
+        </a>
+
+        <ul className="hidden items-center gap-0.5 md:flex">
+          {links.map((link) => (
+            <li key={link.id} className="relative">
+              {active === link.id && (
+                <motion.span
+                  layoutId="nav-pill"
+                  className="absolute inset-0 rounded-full bg-line/[0.07]"
+                  transition={spring}
+                />
+              )}
               <a
-                key={link.name}
-                href={link.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection(link.href);
-                }}
-                className={`relative px-4 py-2 text-sm font-medium rounded-full transition-colors ${
-                  isActive(link.id) 
-                    ? 'text-white bg-white/10' 
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                href={`#${link.id}`}
+                aria-current={active === link.id ? 'true' : undefined}
+                className={`relative block rounded-full px-3.5 py-1.5 text-[0.875rem] transition-colors ${
+                  active === link.id ? 'text-ink' : 'text-ink-2 hover:text-ink'
                 }`}
               >
-                {link.name}
+                {link.label}
               </a>
-            ))}
-          </div>
-          
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-white/80 hover:text-white focus:outline-none p-2 rounded-full hover:bg-white/5 transition-colors"
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex items-center gap-1">
+          <motion.button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event('open-palette'))}
+            whileTap={{ scale: 0.94 }}
+            transition={snappy}
+            aria-label="Open command menu"
+            aria-keyshortcuts="Meta+K Control+K /"
+            className="flex h-9 items-center gap-2 rounded-full px-2.5 text-ink-2 hover:bg-line/[0.07] hover:text-ink lg:bg-line/[0.05] lg:pl-3 lg:pr-2"
           >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+            <Search size={16} />
+            <span className="hidden text-[0.8125rem] lg:inline">Search</span>
+            <kbd className="hidden rounded-md bg-line/[0.08] px-1.5 py-0.5 font-mono text-[0.6875rem] lg:inline">
+              {isMac ? '⌘K' : 'Ctrl K'}
+            </kbd>
+          </motion.button>
+          <AccentPicker />
+          <motion.button
+            type="button"
+            onClick={toggle}
+            whileTap={{ scale: 0.9 }}
+            transition={snappy}
+            aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}
+            className="grid h-9 w-9 place-items-center rounded-full text-ink-2 hover:bg-line/[0.07] hover:text-ink"
+          >
+            {dark ? <Sun size={17} /> : <Moon size={17} />}
+          </motion.button>
+          <motion.button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            whileTap={{ scale: 0.9 }}
+            transition={snappy}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            className="grid h-9 w-9 place-items-center rounded-full text-ink-2 hover:bg-line/[0.07] hover:text-ink md:hidden"
+          >
+            {open ? <X size={18} /> : <Menu size={18} />}
+          </motion.button>
         </div>
-      </div>
-      
-      {/* Mobile Navigation */}
+      </nav>
+
       <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden absolute top-full left-0 w-full bg-background/95 backdrop-blur-xl border-b border-white/10 overflow-hidden shadow-2xl"
+        {open && (
+          <motion.div
+            id="mobile-menu"
+            initial={{ opacity: 0, scale: 0.96, y: -8, filter: 'blur(8px)' }}
+            animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, scale: 0.96, y: -8, filter: 'blur(8px)' }}
+            transition={spring}
+            style={{ transformOrigin: 'top right' }}
+            className="material mx-auto mt-2 max-w-page rounded-3xl p-2 md:hidden"
           >
-            <div className="container-custom py-4 flex flex-col space-y-1">
-              {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection(link.href);
-                  }}
-                  className={`py-3 px-4 rounded-xl font-medium transition-colors ${
-                    isActive(link.id) 
-                      ? 'bg-white/10 text-white' 
-                      : 'text-white/60 hover:bg-white/5 hover:text-white'
-                  }`}
-                >
-                  {link.name}
-                </a>
+            <ul>
+              {links.map((link) => (
+                <li key={link.id}>
+                  <a
+                    href={`#${link.id}`}
+                    onClick={() => setOpen(false)}
+                    className={`block rounded-2xl px-4 py-3 text-[1.0625rem] ${
+                      active === link.id ? 'bg-line/[0.07] text-ink' : 'text-ink-2'
+                    }`}
+                  >
+                    {link.label}
+                  </a>
+                </li>
               ))}
-            </div>
+              <li className="mt-1 border-t border-line/[0.08] pt-1">
+                <a
+                  href="/Vaibhav_Kumawat_Resume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setOpen(false)}
+                  className="block rounded-2xl px-4 py-3 text-[1.0625rem] text-accent"
+                >
+                  Resume
+                </a>
+              </li>
+            </ul>
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </header>
   );
-};
-
-export default Navigation;
+}

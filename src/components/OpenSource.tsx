@@ -1,100 +1,74 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Github, LayoutTemplate, Layers, Wrench, Bug } from 'lucide-react';
+import { ArrowUpRight, GitMerge } from 'lucide-react';
+import { openSource } from '../data';
+import GitHubActivity from './GitHubActivity';
+import { Reveal, Section } from './ui';
+import { useSkill } from './skillFilter';
+import { snappy } from './motion';
 
-const contributions = [
-  {
-    project: 'KubeStellar (UI)',
-    icon: Layers,
-    items: [
-      { text: 'Enhanced UI components for better usability and consistency across cluster management features.', icon: LayoutTemplate },
-      { text: 'Fixed backend logic issues related to resource synchronization and state management.', icon: Bug },
-      { text: 'Contributed to telemetry integration, enabling improved monitoring and diagnostics for multi-cluster environments.', icon: Wrench },
-    ]
-  },
-  {
-    project: 'Ruxailabs (RUXAILAB)',
-    icon: Github,
-    items: [
-      { text: 'Redesigned key UI components to enhance accessibility and responsiveness across devices, improving user interaction flow and reducing interface latency.', icon: LayoutTemplate },
-      { text: 'Refactored legacy styles and optimized component rendering, contributing to a cleaner codebase and smoother navigation experience.', icon: Wrench },
-    ]
-  }
-];
+const total = openSource.contributions.reduce((n, c) => n + c.prs, 0);
 
-const OpenSource = () => {
+export default function OpenSource() {
+  const skill = useSkill();
   return (
-    <section className="section" id="opensource">
-      <div className="container-custom">
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
-          <div className="flex items-center gap-4 mb-4">
-            <h2 className="section-title mb-0">Open Source</h2>
-            <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-white/70 flex items-center gap-1.5">
-              <Github size={14} /> Journey
+    <Section
+      id="open-source"
+      eyebrow="Open source"
+      title={`${total} merged pull requests.`}
+      intro="Contributions to projects other developers depend on, including Hugging Face Diffusers and the CNCF sandbox project KubeStellar."
+    >
+      <div className="grid gap-5 lg:grid-cols-[1fr_2fr]">
+        <Reveal className="hidden lg:block">
+          <div className="card flex h-full flex-col justify-between gap-10 p-8">
+            <div>
+              <GitMerge className="text-accent" size={28} />
+              <p className="mt-6 text-[4rem] font-bold leading-none tracking-tighter">{total}</p>
+              <p className="mt-2 text-ink-2">merged PRs across 4 organizations</p>
             </div>
+            <a href={openSource.allPrs} target="_blank" rel="noopener noreferrer" className="link">
+              See them all on GitHub
+              <ArrowUpRight size={16} />
+            </a>
           </div>
-          <p className="section-subtitle">Passionate about building in public and giving back to the community.</p>
-        </motion.div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-4 space-y-6"
-          >
-            <div className="premium-card p-8 h-full flex flex-col justify-between bg-gradient-to-b from-white/[0.02] to-transparent border-t-blue-500/20">
-              <div>
-                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6">
-                  <Github className="w-7 h-7 text-white/90" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-4">Active Contributor</h3>
-                <p className="text-white/60 leading-relaxed font-light mb-8">
-                  I believe in the power of collaborative software development. Contributing to open-source allows me to learn from the best, improve my skills, and build software that matters.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-          
-          <div className="lg:col-span-8 flex flex-col gap-6">
-            {contributions.map((contribution, cIdx) => (
-              <motion.div
-                key={cIdx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.5, delay: cIdx * 0.1 }}
-                className="premium-card p-8"
-              >
-                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
-                  <contribution.icon className="w-6 h-6 text-blue-400" />
-                  <h4 className="text-xl font-bold text-white">{contribution.project}</h4>
-                </div>
-                
-                <div className="space-y-5">
-                  {contribution.items.map((item, idx) => (
-                    <div key={idx} className="flex gap-4">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <item.icon className="w-4 h-4 text-white/60" />
-                      </div>
-                      <p className="text-white/70 text-sm leading-relaxed">{item.text}</p>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
+        </Reveal>
 
-export default OpenSource;
+        <ul className="card divide-y divide-line/[0.06] overflow-hidden">
+          {openSource.contributions.map((c, i) => (
+            <Reveal as="li" key={c.project} delay={i * 0.05}>
+                <motion.a
+                  href={c.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileTap={{ scale: 0.99 }}
+                  transition={snappy}
+                  className={`group flex items-start gap-4 p-5 transition-[background-color,opacity] duration-300 hover:bg-surface-2/60 sm:gap-5 sm:p-6 ${skill ? (c.skills.includes(skill) ? 'bg-accent/[0.06]' : 'opacity-35') : ''}`}
+                >
+                  <div className="min-w-[3rem] text-right">
+                    <span className="text-2xl font-semibold tracking-tight">{c.prs}</span>
+                    <p className="caption">PR{c.prs > 1 ? 's' : ''}</p>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold tracking-tight">
+                      {c.project} <span className="caption font-normal">· {c.org}</span>
+                    </h3>
+                    <p className="mt-1 text-[0.9375rem] text-ink-2">{c.note}</p>
+                  </div>
+                  <ArrowUpRight
+                    size={18}
+                    className="mt-1 shrink-0 text-ink-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent"
+                  />
+                </motion.a>
+            </Reveal>
+          ))}
+        </ul>
+        <a href={openSource.allPrs} target="_blank" rel="noopener noreferrer" className="link px-1 lg:hidden">
+          See all merged PRs on GitHub
+          <ArrowUpRight size={16} />
+        </a>
+      </div>
+      <Reveal>
+        <GitHubActivity />
+      </Reveal>
+    </Section>
+  );
+}

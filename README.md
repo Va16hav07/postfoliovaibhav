@@ -1,83 +1,51 @@
-# Vaibhav's Portfolio
+# Vaibhav Kumawat · Portfolio
 
-A modern, responsive portfolio website built with React, TypeScript, and TailwindCSS.
+Personal portfolio: [va16hav.vercel.app](https://va16hav.vercel.app/)
 
-## Setup
+Built with React, TypeScript, Tailwind CSS and Framer Motion. Supports light/dark themes, reduced motion, reduced transparency and increased contrast, bundled with Vite and deployed on Vercel.
 
-### Adding Your Profile Image
-
-1. Save your profile image as `profile.jpeg`
-2. Place this file in the `/public` directory
-3. The image will be displayed on the homepage
-
-For quick setup, you can run:
-```bash
-chmod +x copy-profile-image.sh
-./copy-profile-image.sh
-```
-
-### Project Images
-
-All projects use the same image from the local directory (`/public/images/project-image.jpg`). To download this image and set it up:
+## Run locally
 
 ```bash
-chmod +x download-project-image.sh
-./download-project-image.sh
-```
-
-If you want to use different images for each project, modify the `Projects.tsx` file accordingly.
-
-### Adding Your Resume (IMPORTANT)
-
-1. Save your resume as a PDF file with the name `Vaibhav_Kumawat_Resume.pdf`
-2. Place this file in the `/public` directory (not in any subdirectory)
-3. Verify that the file is correctly placed by running:
-   ```bash
-   chmod +x check-resume.sh
-   ./check-resume.sh
-   ```
-4. When deployed, the resume will be available for download through the "Download Resume" buttons
-
-**Note:** If your resume file isn't correctly placed, the download functionality will not work on the live site!
-
-## Deployment
-
-This site can be easily deployed on platforms like:
-
-- Vercel
-- Netlify
-- GitHub Pages
-
-### Deployment Steps for Netlify:
-
-1. Create an account on [Netlify](https://www.netlify.com/)
-2. Connect your GitHub repository
-3. Configure the build settings:
-   - Build command: `npm run build`
-   - Publish directory: `dist`
-4. **IMPORTANT**: Make sure your resume file (`Vaibhav_Kumawat_Resume.pdf`) is in the `/public` directory before deploying!
-
-### Verifying Resume Deployment
-
-After deploying your site, you can verify the resume file is properly deployed by visiting:
-```
-https://your-website-url.com/Vaibhav_Kumawat_Resume.pdf
-```
-
-If the file loads, the download functionality should work correctly.
-
-## Development
-
-```bash
-# Install dependencies
 npm install
-
-# Start development server
-npm run dev
-
-# Check if resume file exists
-./check-resume.sh
-
-# Build for production
-npm run build
+npm run dev      # http://localhost:5173
+npm run build    # production build in dist/
 ```
+
+## Editing content
+
+All text, links, projects, experience, open source and skills live in **`src/data.ts`**. Edit that file; the components only handle layout.
+
+| Piece | File |
+|---|---|
+| 3D work graph (nodes and links) | `src/components/WorkGraph.tsx` |
+| Terminal commands | `src/components/Terminal.tsx` |
+| GitHub activity (fetched at build time) | `scripts/fetch-github.mjs` → `src/generated/github.json` (`npm run github` to refresh) |
+| "Now" section | `now` in `src/data.ts` |
+| Accent colours | `src/components/accent.ts` + `src/index.css` |
+| Binary cursor trail | `src/components/CursorTrail.tsx` |
+| 404 page | `public/404.html` |
+| ⌘K command palette | `src/components/CommandPalette.tsx` |
+| Project case-study sheet | `src/components/ProjectSheet.tsx` |
+| Incident Commander game | `src/components/IncidentGame.tsx` |
+| Merge Runner maze game (levels at the top) | `src/components/MergeRunner.tsx` |
+| Theme colours, type scale, materials | `src/index.css` |
+| Spring settings | `src/components/motion.ts` |
+| Page title, SEO and link-preview tags | `index.html` |
+
+## Assets in `public/`
+
+- `Vaibhav_Kumawat_Resume.pdf`: served by the Resume button. Replace it with the same file name.
+- `photo-*.webp` / `photo-*.jpg`: photos in the About section's flickable stack (listed in `photos` in `src/data.ts`).
+- `og-image.jpg`: 1200×630 link-preview image.
+- `favicon.svg`: favicon.
+
+### Project visuals
+
+Each project falls back to GitHub's generated repository card. To show something real:
+
+1. Record a short silent clip (6–10 s, 1280×640 or any 2:1 size, MP4/H.264, ideally under 2 MB).
+2. Save it as `public/projects/<slug>.mp4`, plus an optional still as `public/projects/<slug>.jpg`.
+3. In `src/data.ts`, add to that project: `media: { video: '/projects/<slug>.mp4', image: '/projects/<slug>.jpg' }`.
+
+Videos play on hover in the grid and automatically inside the case study (not for visitors who prefer reduced motion). Slugs: `travel-planner`, `peak`, `aria`, `ojt-maker`, `terminal-devtool`, `equiply`.

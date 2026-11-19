@@ -1,11 +1,12 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "vaibhav-portfolio",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "chmod +x check-resume.sh && ./check-resume.sh",
+    "github": "node scripts/fetch-github.mjs",
+    "prebuild": "node scripts/fetch-github.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
