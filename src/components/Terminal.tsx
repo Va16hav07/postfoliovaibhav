@@ -221,7 +221,7 @@ function run(raw: string, ctx: Ctx = { history: [] }): ReactNode | 'clear' {
             linkedin <A href={profile.links.linkedin}>va16hav</A>
           </div>
           <div>
-            x <A href={profile.links.x}>@Va16hav</A>
+            x <A href={profile.links.x}>@Va1_6hav</A>
           </div>
         </div>
       );

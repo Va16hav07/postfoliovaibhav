@@ -10,7 +10,7 @@ export const profile = {
   links: {
     github: 'https://github.com/Va16hav07',
     linkedin: 'https://www.linkedin.com/in/va16hav/',
-    x: 'https://x.com/Va16hav',
+    x: 'https://x.com/Va1_6hav',
   },
 };
 
